@@ -1,8 +1,8 @@
 **Pre-Requisites**
+
 - Docker & Docker-Compose
 - Java
 - Maven
-
 
 ## Create a Docker Compose File
 
@@ -121,6 +121,7 @@ networks:
 ```shell
 mvn archetype:generate
 ```
+
 - choose what you want as groupId (usually a domain in reverse like "com.xyz") and artifactId (name of the project like "flink-iceberg-job") for everything else you can choose the defaults
 
 - You'll have three files available
@@ -129,4 +130,25 @@ mvn archetype:generate
 /{artifactId}/pom.xml # Tracks Dependencies
 /{artifactId}/src/main/java/{groupId}/App.java # Main File
 /{artifactId}/src/test/java/{groupId}/AppTest.java # unit-tests
+```
+
+- Then within the `<Dependencies></Dependencies>` section of the pom.xml add the following
+
+```xml
+<dependency>
+        <groupId>org.apache.flink</groupId>
+        <artifactId>flink-java</artifactId>
+        <version>1.16.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.flink</groupId>
+        <artifactId>flink-streaming-java</artifactId>
+        <version>1.16.1</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.iceberg</groupId>
+        <artifactId>iceberg-flink</artifactId>
+        <version>1.3.0</version>
+    </dependency>
 ```
