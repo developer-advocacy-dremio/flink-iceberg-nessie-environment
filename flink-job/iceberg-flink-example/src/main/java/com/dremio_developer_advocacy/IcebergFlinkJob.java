@@ -9,8 +9,6 @@ import org.apache.flink.types.Row;
 import org.apache.iceberg.*;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.TableIdentifier;
-import org.apache.iceberg.flink.TableLoader;
-import org.apache.iceberg.flink.sink.FlinkSink;
 import org.apache.iceberg.nessie.NessieCatalog;
 import org.apache.iceberg.hadoop.HadoopCatalog;
 import org.apache.hadoop.conf.Configuration;
@@ -23,6 +21,7 @@ import java.util.UUID;
 public class IcebergFlinkJob {
 
     public static void main(String[] args) throws Exception {
+        
         // Create Flink Execution Environment
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
@@ -41,12 +40,20 @@ public class IcebergFlinkJob {
         // Initialize the Nessie Catalog
         nessieCatalog.initialize("nessie", nessieConfig);
 
+        // Create Iceberg Schema
         Schema schema = new Schema(
-                Types.NestedField.optional(1, "id", Types.IntegerType.get()),
-                Types.NestedField.optional(2, "name", Types.StringType.get()),
-                Types.NestedField.optional(3, "age", Types.IntegerType.get()));
+                org.apache.iceberg.types.Types.NestedField.optional(
+                        1, "id",
+                        org.apache.iceberg.types.Types.IntegerType.get()),
+                org.apache.iceberg.types.Types.NestedField.optional(
+                        2, "name",
+                        org.apache.iceberg.types.Types.StringType.get()),
+                org.apache.iceberg.types.Types.NestedField.optional(
+                        3, "age",
+                        org.apache.iceberg.types.Types.IntegerType.get()));
 
-        PartitionSpec spec = PartitionSpec.builderFor(schema).identity("id").build();
+        // Create Iceberg Partition Spec
+        PartitionSpec spec = PartitionSpec.builderFor(schema).identity("age").build();
 
         TableIdentifier id = TableIdentifier.of("default", "mytable");
 
