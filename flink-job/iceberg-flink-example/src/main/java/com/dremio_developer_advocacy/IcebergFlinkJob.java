@@ -7,6 +7,8 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.types.Row;
 import org.apache.iceberg.*;
+import org.apache.iceberg.flink.sink.FlinkSink;
+import org.apache.iceberg.flink.TableLoader;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.nessie.NessieCatalog;
@@ -22,18 +24,19 @@ public class IcebergFlinkJob {
 
     public static void main(String[] args) throws Exception {
         
+
         // Create Flink Execution Environment
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         // Create Nessie Catalog Settings Map
         Map<String, String> nessieConfig = new HashMap<>();
         // Add settings to the map
-        nessieConfig.put("uri", "http://rest:8181");
+        nessieConfig.put("uri", "http://localhost:19120/api/v1");
+        nessieConfig.put("ref", "main");
+        nessieConfig.put("auth", "none");
         nessieConfig.put("io-impl", "org.apache.iceberg.aws.s3.S3FileIO");
         nessieConfig.put("warehouse", "s3://warehouse/wh/");
         nessieConfig.put("s3.endpoint", "http://minio:9000");
-        nessieConfig.put("fs.defaultFS", "<hadoop_fs_default>");
-        nessieConfig.put("hive.metastore.uris", "<hive_metastore_uri>");
 
         // Create Nessie Catalog
         Catalog nessieCatalog = new NessieCatalog();
