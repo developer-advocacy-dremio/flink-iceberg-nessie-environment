@@ -1,10 +1,12 @@
 package com.dremio_developer_advocacy;
 
-import org.apache.flink.api.common.typeinfo.Types;
-import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import static org.apache.flink.table.api.Expressions.$;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -15,17 +17,18 @@ public class Main {
         // set up the table environment
         final StreamTableEnvironment tableEnv = StreamTableEnvironment.create(
                 env,
-                EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build()
+                EnvironmentSettings.newInstance().inStreamingMode().build()
         );
 
         // create the Nessie catalog
         tableEnv.executeSql(
-            "CREATE CATALOG my_catalog WITH ("
+            "CREATE CATALOG iceberg WITH ("
             + "'type'='iceberg',"
             + "'catalog-impl'='org.apache.iceberg.nessie.NessieCatalog',"
-            + "'uri'='http://localhost:19120/api/v1',"
+            + "'uri'='http://catalog:19120/api/v1',"
+            + "'auth'='none',"
             + "'ref'='main',"
-            + "'warehouse' = '/path/to/flink/warehouse'"
+            + "'warehouse' = '/warehouse'"
             + ")"
         );
 
@@ -37,15 +40,18 @@ public class Main {
             + ")"
         );
 
-        // create a DataStream of Tuple2 (equivalent to Row of 2 fields)
+ // create a DataStream of Tuple2 (equivalent to Row of 2 fields)
         DataStream<Tuple2<Long, String>> dataStream = env.fromElements(
             Tuple2.of(1L, "foo"),
-            Tuple2.of(2L, "bar"),
-            Tuple2.of(3L, "baz")
+            Tuple2.of(1L, "bar"),
+            Tuple2.of(1L, "baz")
         );
 
-        // register the DataStream as a table in the TableEnvironment
-        tableEnv.createTemporaryView("my_datastream", dataStream, $("id"), $("data"));
+        // convert the DataStream to a Table
+        Table table = tableEnv.fromDataStream(dataStream, $("id"), $("data"));
+
+        // register the Table as a temporary view
+        tableEnv.createTemporaryView("my_datastream", table);
 
         // write the DataStream to the table
         tableEnv.executeSql(
