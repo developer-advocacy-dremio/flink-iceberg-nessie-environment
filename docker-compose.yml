@@ -38,6 +38,7 @@ services:
   storage:
     image: minio/minio
     container_name: storage
+    environment:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
       - MINIO_DOMAIN=minio
@@ -50,7 +51,7 @@ services:
   # Minio Client Container
   mc:
     depends_on:
-      - minio
+      - storage
     image: minio/mc
     container_name: mc
     networks:
@@ -64,12 +65,14 @@ services:
       until (/usr/bin/mc config host add minio http://storage:9000 admin password) do echo '...waiting...' && sleep 1; done;
       /usr/bin/mc rm -r --force minio/warehouse;
       /usr/bin/mc mb minio/warehouse;
+      /usr/bin/mc mb minio/iceberg;
       /usr/bin/mc policy set public minio/warehouse;
+      /usr/bin/mc policy set public minio/iceberg;
       tail -f /dev/null
       "
   # Flink Job Manager
   flink-jobmanager:
-    image: flink:latest
+    image: alexmerced/flink-iceberg:latest
     ports:
       - "8081:8081"
     command: jobmanager
@@ -84,7 +87,7 @@ services:
       - AWS_REGION=us-east-1
   # Flink Task Manager
   flink-taskmanager:
-    image: flink:latest
+    image: alexmerced/flink-iceberg:latest
     depends_on:
       - flink-jobmanager
     command: taskmanager
