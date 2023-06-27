@@ -21,6 +21,7 @@ services:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
       - AWS_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
     ports:
       - 8888:8888
       - 8080:8080
@@ -42,6 +43,8 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
       - MINIO_DOMAIN=minio
+      - MINIO_REGION_NAME=us-east-1
+      - MINIO_REGION=us-east-1
     networks:
       iceberg_net:
     ports:
@@ -60,6 +63,7 @@ services:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
       - AWS_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
     entrypoint: >
       /bin/sh -c "
       until (/usr/bin/mc config host add minio http://storage:9000 admin password) do echo '...waiting...' && sleep 1; done;
@@ -85,6 +89,7 @@ services:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
       - AWS_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
   # Flink Task Manager
   flink-taskmanager:
     image: alexmerced/flink-iceberg:latest
@@ -102,5 +107,6 @@ services:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
       - AWS_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
 networks:
   iceberg_net:
