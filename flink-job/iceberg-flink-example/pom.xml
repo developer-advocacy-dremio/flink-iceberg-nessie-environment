@@ -88,6 +88,11 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    <groupId>org.apache.flink</groupId>
+    <artifactId>flink-connector-files</artifactId>
+    <version>1.17.1</version>
+</dependency>
   </dependencies>
 
   <build>
