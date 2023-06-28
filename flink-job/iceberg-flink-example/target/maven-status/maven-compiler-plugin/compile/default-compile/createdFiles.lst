@@ -1,2 +1,6 @@
+com/dremio_developer_advocacy/Main$1.class
 com/dremio_developer_advocacy/HadoopIceberg.class
 com/dremio_developer_advocacy/WordCount.class
+com/dremio_developer_advocacy/WordCount$Tokenizer.class
+com/dremio_developer_advocacy/ExampleData.class
+com/dremio_developer_advocacy/Main.class
