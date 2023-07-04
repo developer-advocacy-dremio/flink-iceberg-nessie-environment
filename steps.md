@@ -283,14 +283,6 @@ import com.dremio_developer_advocacy.ExampleData;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        // Configure the S3 file system
-        // Configuration config = new Configuration();
-        // config.setString("s3.access-key", "ryocQXbviUDyuV4qkLyD");
-        // config.setString("s3.secret-key",
-        // "0PkHnmmqzy4bFRtlXfp5i7XJPyrB9cl2nufpBcwU");
-        // config.setString("s3.endpoint", "http://storage:9000");
-        // config.setBoolean("s3.path.style.access", true);
-
         System.setProperty("fs.s3a.endpoint", "http://storage:9000");
         System.setProperty("fs.s3a.access.key", "admin");
         System.setProperty("fs.s3a.secret.key", "password");
