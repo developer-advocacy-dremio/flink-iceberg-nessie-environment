@@ -35,6 +35,8 @@ services:
       iceberg-nessie-flink-net:
     ports:
       - 19120:19120
+    environment:
+      - quarkus.otel.sdk.disabled=true      
   # Minio Storage Server
   storage:
     image: minio/minio
